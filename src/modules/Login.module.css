@@ -1,0 +1,41 @@
+.logInForm {
+  max-width: 400px;
+  border: none;
+  border-radius: 1rem;
+  padding: 1rem;
+  margin-top: 50px;
+  background-color: white;
+  border: none;
+  box-shadow: -49px 0px 48px 33px rgba(0, 0, 0, 0.1);
+}
+.logIn {
+  height: calc(100vh - 70px);
+  background-image: url("../images/background.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+}
+
+.inputLogin {
+  background-color: rgb(211, 211, 211);
+}
+
+.credentials {
+  font-weight: 800;
+  margin-bottom: 50px;
+  font-family: "Inter", sans-serif;
+}
+
+.hyperlink {
+  color: black;
+  font-weight: 600;
+  margin-left: 5px;
+}
+
+.adminLink {
+  font-family: "Inter", sans-serif;
+  color: black;
+  margin-left: 4px;
+}

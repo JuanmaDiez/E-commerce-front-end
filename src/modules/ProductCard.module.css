@@ -1,0 +1,10 @@
+.outOfStock {
+  height: 35px;
+  width: auto;
+  position: relative;
+  right: 20px;
+  z-index: 1;
+}
+.productImage {
+  z-index: 0;
+}

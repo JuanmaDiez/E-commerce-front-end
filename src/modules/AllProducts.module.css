@@ -1,0 +1,18 @@
+.allProductsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 230px);
+  gap: 40px;
+  padding: 40px;
+  justify-content: center;
+}
+
+@media (max-width: 480px) {
+  .allProductsGrid {
+    grid-template-columns: 100%;
+  }
+}
+
+.cameraImg{
+  width: 100%;
+  background-size: cover; 
+}

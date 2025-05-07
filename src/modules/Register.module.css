@@ -1,0 +1,27 @@
+.signUpForm {
+  max-width: 400px;
+  border: none;
+  border-radius: 1rem;
+  padding: 1rem;
+  background-color: white;
+  box-shadow: -49px 0px 48px 33px rgba(0, 0, 0, 0.1);
+}
+.register {
+  height: calc(100vh - 70px);
+  background-image: url("../images/background.jpg");
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  font-family: "Inter", sans-serif;
+  font-weight: 600;
+}
+
+.inputRegister {
+  background-color: rgb(211, 211, 211);
+}
+
+.hyperlink {
+  color: black;
+  font-weight: 600;
+  margin-left: 5px;
+}
