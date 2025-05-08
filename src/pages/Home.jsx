@@ -6,22 +6,25 @@ import ProductSlider from "../components/ProductSlider";
 import FooterDark from "../components/FooterDark";
 import AboutUsHome from "../components/AboutUsHome";
 import Admin from "../components/Admin";
-import axios from "axios";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { productIndex } from "../controllers/productController";
 
 function Home() {
   const [products, setProducts] = useState();
 
+  const getProducts = async () => {
+    const response = await productIndex(true);
+
+    if (!response.success) {
+      toast.error(response.message);
+      return;
+    }
+
+    setProducts(response.products);
+  };
+
   useEffect(() => {
-    const getProducts = async () => {
-      const response = await axios({
-        url: `${process.env.REACT_APP_API_URL}/products`,
-        method: "GET",
-        params: { featured: true },
-      });
-      setProducts(response.data);
-    };
     getProducts();
   }, []);
 

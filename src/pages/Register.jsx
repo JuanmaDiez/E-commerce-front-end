@@ -4,21 +4,37 @@ import { Link, useNavigate } from "react-router-dom";
 import NavbarHeader from "../components/NavbarHeader";
 import styles from "../modules/Register.module.css";
 import { login } from "../redux/userSlice";
+import { userStore } from "../controllers/userController";
+import { toast } from "react-toastify";
 
 function Register() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const [firstname, setFirstname] = useState("");
+  const [lastname, setLastname] = useState("");
+  const [email, setEmail] = useState("");
+  const [address, setAddress] = useState("");
+  const [phoneNumber, setPhoneNumber] = useState("");
+  const [password, setPassword] = useState("");
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    const formData = new FormData(event.target);
-    const response = await axios({
-      url: "http://localhost:8000/users",
-      method: "POST",
-      data: formData,
-      headers: { "Content-Type": "multipart/form-data" },
-    });
-    dispatch(login(response.data));
+    const response = await userStore(
+      firstname,
+      lastname,
+      email,
+      password,
+      address,
+      phoneNumber,
+      password
+    );
+
+    if (!response.success) {
+      toast.error(response.message);
+      return;
+    }
+
+    dispatch(login(response.user));
     navigate("/");
   };
 
@@ -39,7 +55,10 @@ function Register() {
                 className={styles.inputRegister + " form-control"}
                 id="exampleFormControlInput1"
                 name="firstname"
+                value={firstname}
+                onChange={(event) => setFirstname(event.target.value)}
                 placeholder="Firstname..."
+                required
               />
             </div>
             <div className="form-group mb-2">
@@ -49,6 +68,8 @@ function Register() {
                 className={styles.inputRegister + " form-control"}
                 id="exampleFormControlInput2"
                 name="lastname"
+                value={lastname}
+                onChange={(event) => setLastname(event.target.value)}
                 placeholder="Lastname..."
               />
             </div>
@@ -59,6 +80,8 @@ function Register() {
                 className={styles.inputRegister + " form-control"}
                 id="exampleFormControlInput3"
                 name="email"
+                value={email}
+                onChange={(event) => setEmail(event.target.value)}
                 placeholder="Email..."
               />
             </div>
@@ -69,6 +92,8 @@ function Register() {
                 className={styles.inputRegister + " form-control"}
                 id="exampleFormControlInput4"
                 name="address"
+                value={address}
+                onChange={(event) => setAddress(event.target.value)}
                 placeholder="Address..."
               />
             </div>
@@ -79,6 +104,8 @@ function Register() {
                 className={styles.inputRegister + " form-control"}
                 id="exampleFormControlInput5"
                 name="phoneNumber"
+                value={phoneNumber}
+                onChange={(event) => setPhoneNumber(event.target.value)}
                 placeholder="Phone Number..."
               />
             </div>
@@ -89,6 +116,8 @@ function Register() {
                 className={styles.inputRegister + " form-control"}
                 id="exampleFormControlInput6"
                 name="password"
+                value={password}
+                onChange={(event) => setPassword(event.target.value)}
                 placeholder="Password..."
               />
             </div>

@@ -1,26 +1,32 @@
-import axios from "axios";
 import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NavbarHeader from "../components/NavbarHeader";
 import styles from "../modules/Category.module.css";
 import ProductCard from "../components/ProductCard";
 import FooterDark from "../components/FooterDark";
 import ProductSlider from "../components/ProductSlider";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { IMAGES_URL } from "../constants/constants";
 
 function Category() {
+  const navigate = useNavigate();
   const params = useParams();
   const [category, setCategory] = useState(null);
 
+  const getCategory = async () => {
+    const response = await categoriesGet(params.name);
+
+    if (!response.success) {
+      toast.error(response.message);
+      navigate("/");
+      return;
+    }
+
+    setCategory(response.category);
+  };
+
   useEffect(() => {
-    const getCategory = async () => {
-      const response = await axios({
-        url: `${process.env.REACT_APP_API_URL}/categories/${params.name}`,
-        method: "GET",
-      });
-      setCategory(response.data);
-    };
     getCategory();
   }, [params.name]);
 
@@ -44,7 +50,7 @@ function Category() {
 
         <div>
           <img
-            src={`${process.env.REACT_APP_IMAGES_URL}/${category.image2}`}
+            src={`${IMAGES_URL}/${category.image2}`}
             alt={category.name}
             className={styles.categoryImg}
           />

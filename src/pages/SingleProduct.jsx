@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import NavbarHeader from "../components/NavbarHeader";
 import { addToCart } from "../redux/cartSlice";
 import FooterDark from "../components/FooterDark";
@@ -9,23 +9,30 @@ import outOfStock from "../images/out-of-stock.png";
 import styles from "../modules/SingleProduct.module.css";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { productGet } from "../controllers/productController";
 
 function SingleProduct() {
   const cart = useSelector((state) => state.cart);
   const [product, setProduct] = useState(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const params = useParams();
 
+  const getProduct = async () => {
+    const response = await productGet(params.id);
+
+    if (!response) {
+      toast.error(response.message);
+      navigate("/");
+      return;
+    }
+
+    setProduct(response.product);
+  };
+
   useEffect(() => {
-    const getProduct = async () => {
-      const response = await axios({
-        url: `${process.env.REACT_APP_API_URL}/products/${params.id}`,
-        method: "GET",
-      });
-      setProduct(response.data);
-    };
     getProduct();
-  }, [params.id]);
+  }, []);
 
   const add = (product) => {
     const productInCart = cart.find(

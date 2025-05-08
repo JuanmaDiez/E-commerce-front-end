@@ -4,21 +4,24 @@ import ProductCard from "../components/ProductCard";
 import goProPicture from "../images/goProPicture.PNG";
 import FooterDark from "../components/FooterDark";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { ToastContainer } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { productIndex } from "../controllers/productController";
 
 function AllProducts() {
   const [products, setProducts] = useState(null);
+  const getProducts = async () => {
+    const response = await productIndex(null);
+
+    if (!response.success) {
+      toast.error(response.message);
+      return;
+    }
+
+    setProducts(response.products);
+  };
 
   useEffect(() => {
-    const getProducts = async () => {
-      const response = await axios({
-        url: `${process.env.REACT_APP_API_URL}/products`,
-        method: "GET",
-      });
-      setProducts(response.data);
-    };
     getProducts();
   }, []);
 

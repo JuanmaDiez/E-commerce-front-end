@@ -7,6 +7,7 @@ import { login } from "../redux/userSlice";
 import { useState } from "react";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { userLogin } from "../controllers/userController";
 
 function Login() {
   const dispatch = useDispatch();
@@ -16,20 +17,15 @@ function Login() {
 
   const handleLogIn = async (event) => {
     event.preventDefault();
-    try {
-      const response = await axios({
-        url: `${process.env.REACT_APP_API_URL}/users/login`,
-        method: "POST",
-        data: {
-          email,
-          password,
-        },
-      });
-      dispatch(login(response.data));
-      navigate("/");
-    } catch (error) {
-      toast.error("Incorrect email or password");
+    const response = await userLogin(email, password);
+
+    if (!response.success) {
+      toast.error(response.message);
+      return;
     }
+
+    dispatch(login(response.user));
+    navigate("/");
   };
 
   return (
@@ -62,6 +58,7 @@ function Login() {
                   className={styles.inputLogin + " form-control"}
                   id="exampleFormControlInput1"
                   name="email"
+                  value={email}
                   placeholder="Email..."
                   onChange={(event) => setEmail(event.target.value)}
                 />
@@ -74,6 +71,7 @@ function Login() {
                   id="exampleFormControlInput2"
                   name="password"
                   placeholder="Password..."
+                  value={password}
                   onChange={(event) => setPassword(event.target.value)}
                 />
               </div>

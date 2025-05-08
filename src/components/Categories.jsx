@@ -2,18 +2,25 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import styles from "../modules/Categories.module.css";
+import { categoriesIndex } from "../controllers/categoryController";
+import { toast } from "react-toastify";
+import { IMAGES_URL } from "../constants/constants";
 
 function Categories() {
   const [categories, setCategories] = useState(null);
 
+  const getCategories = async () => {
+    const response = await categoriesIndex();
+
+    if (!response.success) {
+      toast.error(response.message);
+      return;
+    }
+
+    setCategories(response.categories);
+  };
+
   useEffect(() => {
-    const getCategories = async () => {
-      const response = await axios({
-        url: `${process.env.REACT_APP_API_URL}/categories`,
-        method: "GET",
-      });
-      setCategories(response.data);
-    };
     getCategories();
   }, []);
 
@@ -30,7 +37,7 @@ function Categories() {
                 <div className={styles.card}>
                   <Link to={`/category/${category.name}`}>
                     <img
-                      src={`${process.env.REACT_APP_IMAGES_URL}/${category.image1}`}
+                      src={`${IMAGES_URL}/${category.image1}`}
                       alt={category.name}
                       className="img-fluid"
                     />
