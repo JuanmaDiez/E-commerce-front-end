@@ -32,3 +32,5 @@ async function orderStore(token, cart, price) {
     };
   }
 }
+
+export { orderStore };

@@ -4,13 +4,16 @@ import { useDispatch, useSelector } from "react-redux";
 import NabvarDark from "../components/NavbarDark";
 import styles from "../modules/Payments.module.css";
 import { format } from "date-fns";
-import { edit_data } from "../redux/userSlice";
+import { edit_data, logout } from "../redux/userSlice";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { userGet } from "../controllers/userController";
+import { useNavigate } from "react-router-dom";
 
 function UserOrders() {
   const [profileUser, setProfileUser] = useState(null);
   const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [displayInfo, setDisplayInfo] = useState("d-block");
   const [displayForm, setDisplayForm] = useState("d-none");
   const [firstname, setFirstname] = useState(null);
@@ -22,15 +25,22 @@ function UserOrders() {
   const [prePassword, setPrePassword] = useState(null);
   const dispatch = useDispatch();
 
+  const getUser = async () => {
+    const response = await userGet(user.id, user.token);
+
+    if (!response.success) {
+      if (response.unauthorized) {
+        dispatch(logout());
+        toast.error("Session expired");
+        navigate("/login");
+        return;
+      }
+    }
+
+    setProfileUser(response.user);
+  };
+
   useEffect(() => {
-    const getUser = async () => {
-      const response = await axios({
-        url: `${process.env.REACT_APP_API_URL}/users/${user.id}`,
-        method: "GET",
-        headers: { Authorization: `Bearer ${user.token}` },
-      });
-      setProfileUser(response.data);
-    };
     getUser();
   }, [user.id]);
 

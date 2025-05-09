@@ -3,53 +3,58 @@ import NavbarDark from "../components/NavbarDark";
 import styles from "../modules/Payments.module.css";
 import { useSelector } from "react-redux";
 import FooterDark from "../components/FooterDark";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useState } from "react";
 import { emptyCart } from "../redux/cartSlice";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { orderStore } from "../controllers/orderController";
 
 function Payments() {
   const cart = useSelector((state) => state.cart);
   const user = useSelector((state) => state.user);
+  const navigate = useNavigate();
   const [alert, setAlert] = useState(null);
   const dispatch = useDispatch();
   const handleSubmit = async (event) => {
     event.preventDefault();
-    await axios({
-      url: `${process.env.REACT_APP_API_URL}/orders`,
-      method: "POST",
-      data: {
-        products: cart,
-        price: cart.reduce(
-          (acc, current) => acc + current.quantity * current.price,
-          10
-        ),
-      },
-      headers: { Authorization: `Bearer ${user.token}` },
-    });
+    const price = cart.reduce(
+      (acc, current) => acc + current.quantity * current.price,
+      0
+    );
+    const response = await orderStore(user.token, cart, price);
+
+    if (!response.success) {
+      if (response.unauthorized) {
+        dispatch(emptyCart());
+        toast.error("Your session has expired, please login in again");
+        navigate("/login");
+        return;
+      }
+    }
+
     dispatch(emptyCart());
     setAlert("Thanks for shopping with us!");
-    toast.success("Purchased! We hope you like it!")
+    toast.success(response.message);
   };
 
   return (
     <>
       <NavbarDark />
       <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={true}
-          newestOnTop={true}
-          closeOnClick
-          rtl={false}
-          pauseOnFocusLoss
-          draggable
-          pauseOnHover
-          theme="light"
-        />
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={true}
+        newestOnTop={true}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       <div className="container">
         {alert ? (
           <div className="d-flex flex-column align-items-center">

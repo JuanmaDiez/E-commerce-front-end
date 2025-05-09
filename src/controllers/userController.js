@@ -1,5 +1,10 @@
 import axios from "axios";
-import { POST, USERS_URL } from "../constants/constants";
+import {
+  GET,
+  POST,
+  STATUS_UNAUTHORIZED,
+  USERS_URL,
+} from "../constants/constants";
 import { INSUFFICIENT_DATA, SERVER_ERROR } from "../constants/errorMessages";
 
 async function userStore(
@@ -94,4 +99,28 @@ async function userLogin(email, password) {
   }
 }
 
-export { userStore, userLogin };
+async function userGet(id, token) {
+  if (!id || !token) return { success: false, message: SERVER_ERROR };
+
+  try {
+    const response = await axios({
+      url: USERS_URL + "/" + id,
+      method: GET,
+      headers: { Authorization: `Bearer ${token}` },
+    });
+
+    if (!response) return { success: false, message: SERVER_ERROR };
+  } catch (error) {
+    if (!error.response) return { success: false, message: SERVER_ERROR };
+
+    const errorResponse = error.response;
+
+    return {
+      success: false,
+      message: errorResponse.data.message,
+      unauthorized: errorResponse.status === STATUS_UNAUTHORIZED,
+    };
+  }
+}
+
+export { userStore, userLogin, userGet };
